@@ -25,12 +25,11 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 builder.Services.AddScoped<IValidator<BaseAuthorDto>, AuthorValidator>();
-//builder.Services.AddScoped<IValidator<AuthorDto>, AuthorValidator>();
 builder.Services.AddScoped<IValidator<CreateAuthorDto>, AuthorValidator>();
+
 builder.Services.AddScoped<IValidator<BaseBookDto>, BookValidator>();
-//builder.Services.AddTransient<IValidator<BookDto>, BookValidator>();
-builder.Services.AddScoped<IValidator<CreateBookDto>, BookValidator>();
-builder.Services.AddScoped<IValidator<UpdateBookDto>, BookValidator>();
+builder.Services.AddScoped<IValidator<CreateBookDto>, CreateBookValidator>();
+builder.Services.AddScoped<IValidator<UpdateBookDto>, UpdateBookDtoValidator>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -47,7 +46,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>

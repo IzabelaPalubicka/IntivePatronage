@@ -12,16 +12,5 @@ namespace Patronage.API.Validators
             RuleFor(a => a.BirthDate).NotEmpty().WithMessage("{PropertyName} cannot be empty DateTime.");
             RuleFor(a => a.Gender).NotNull().WithMessage("{PropertyName} must be a bool and cannot be null.");
         }
-
-        //private bool BeAValidDate(DateTime arg)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        private bool BeAValidDate(string date)
-        {
-            DateTime tempDate;
-            return DateTime.TryParse(date, out tempDate);
-        }
     }
 }

@@ -36,7 +36,7 @@ namespace Patronage.API.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<ActionResult<IEnumerable<AuthorDto>>> GetFilteredAuthors(AuthorFilter filter)
+        public async Task<ActionResult<IEnumerable<AuthorDto>>> GetFilteredAuthors([FromQuery] AuthorFilter filter)
         {
             var authorEntities = await _authorRepository.GetFilteredAuthorsAsync(filter);
 

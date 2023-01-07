@@ -1,13 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "V/cE+pdtTYv+T31XigrtCSThFFXOM1aFI6arDLHhwFBuu/TZL5ZXC2o+NbeFoLHltuXhBH2LMB+W/7+X7kRQuw==",
+  "dgSpecHash": "Sx4V75FXqj8sgDqkv0KYQ4jJArDwT/5sg7NQJ2GS9akvwno9WXnv8bOjiBohjQ6kUKGcL6uJp1zThfMO2THWxQ==",
   "success": true,
   "projectFilePath": "E:\\Documents\\Moje programy\\intive\\IntivePatronage\\Patronage\\Patronage.Application\\Patronage.Application.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Iza\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
-    "C:\\Users\\Iza\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\Iza\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.data.sqlclient\\5.0.1\\microsoft.data.sqlclient.5.0.1.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\5.0.1\\microsoft.data.sqlclient.sni.runtime.5.0.1.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.1\\microsoft.entityframeworkcore.7.0.1.nupkg.sha512",

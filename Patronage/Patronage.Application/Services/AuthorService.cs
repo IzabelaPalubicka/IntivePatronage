@@ -39,6 +39,11 @@ namespace Patronage.Application.Repositories
             return true;
         }
 
+        public async Task<HashSet<int>> AuthorsExist(List<int> ids)
+        {
+            return (await _context.Authors.Where(x => ids.Contains(x.Id)).Select(x => x.Id).ToListAsync()).ToHashSet();
+        }
+
         public async Task<IEnumerable<Author>> GetAuthorsAsync()
         {
             return await _context.Authors.Include(a => a.BookAuthors).ToListAsync();
@@ -49,11 +54,6 @@ namespace Patronage.Application.Repositories
             return await _context.Authors
                 .Where(a => (a.FirstName + " " + a.LastName).ToLower().Contains(authorFilter.Name.ToLower()))
                 .ToListAsync();
-        }
-
-        public async Task<bool> SaveChangesAsync()
-        {
-            return (await _context.SaveChangesAsync() >= 0);
         }
     }
 }

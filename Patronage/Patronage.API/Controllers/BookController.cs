@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Patronage.Application.Filters;
 using Patronage.Application.Models.Book;
@@ -22,32 +21,16 @@ namespace Patronage.API.Controllers
         {
             _createBookValidator = createBookValidator;
             _updateBookValidator = updateBookValidator;
-            _bookRepository = bookRepository ??
-                throw new ArgumentNullException(nameof(bookRepository));
+            _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpPost]
         public async Task<ActionResult<BookDto>> CreateBook(CreateBookDto createBookDto)
         {
+            await _createBookValidator.ValidateAndThrowAsync(createBookDto);
+
             var bookEntity = _mapper.Map<Book>(createBookDto);
-            bookEntity.BookAuthors = new List<BookAuthor>();
-
-            createBookDto.AuthorsIds = createBookDto.AuthorsIds.Distinct().ToList();
-
-            foreach (int id in createBookDto.AuthorsIds)
-            {
-                if (!await _bookRepository.AuthorExistAsync(id))
-                {
-                    return NotFound("Author not found.");
-                }
-                BookAuthor bookAuthor = new BookAuthor
-                {
-                    AuthorId = id,
-                };
-
-                bookEntity.BookAuthors.Add(bookAuthor);
-            }
 
             if (!(await _bookRepository.AddBookAsync(bookEntity)))
             {
@@ -75,53 +58,21 @@ namespace Patronage.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBook(int bookId, UpdateBookDto updateBookDto)
+        public async Task<ActionResult> UpdateBook(int id, UpdateBookDto updateBookDto)
         {
-            ValidationResult result = await _updateBookValidator.ValidateAsync(updateBookDto);
+            await _updateBookValidator.ValidateAndThrowAsync(updateBookDto);
 
-            if (!result.IsValid)
-            {
-                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
-                return BadRequest(errorMessages);
-            }
-            var bookEntity = await _bookRepository.GetBookAsync(bookId);
-
-            if (bookEntity == null)
+            if (!(await _bookRepository.UpdateBookAsync(id, updateBookDto)))
             {
                 return NotFound();
-            }
-
-            _mapper.Map(updateBookDto, bookEntity);
-
-            bookEntity.BookAuthors = new List<BookAuthor>();
-
-            updateBookDto.AuthorsIds = updateBookDto.AuthorsIds.Distinct().ToList();
-
-            foreach (int id in updateBookDto.AuthorsIds)
-            {
-                if (!await _bookRepository.AuthorExistAsync(id))
-                {
-                    return NotFound("Author not found.");
-                }
-                BookAuthor bookAuthor = new BookAuthor
-                {
-                    AuthorId = id,
-                };
-
-                bookEntity.BookAuthors.Add(bookAuthor);
-            }
-
-            if (!(await _bookRepository.SaveChangesAsync()))
-            {
-                return BadRequest();
             }
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteBook(int bookId)
+        public async Task<ActionResult> DeleteBook(int id)
         {
-            var bookEntity = await _bookRepository.GetBookAsync(bookId);
+            var bookEntity = await _bookRepository.GetBookAsync(id);
 
             if (bookEntity == null)
             {

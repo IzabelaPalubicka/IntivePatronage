@@ -9,6 +9,6 @@ namespace Patronage.Application.Repositories
         Task<IEnumerable<Author>> GetAuthorsAsync();
         Task<IEnumerable<Author>> GetFilteredAuthorsAsync(AuthorFilter filter);
         Task<bool> SaveChangesAsync();
-
+        Task<HashSet<int>> AuthorsExist(List<int> ids);
     }
 }
