@@ -1,9 +1,8 @@
-﻿using AutoMapper;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Patronage.Application.Filters;
 using Patronage.Application.Models.Author;
 using Patronage.Application.Repositories;
-using Patronage.Database.Entities;
 
 namespace Patronage.API.Controllers
 {
@@ -11,56 +10,38 @@ namespace Patronage.API.Controllers
     [Route("api/[controller]")]
     public class AuthorController : Controller
     {
-        private readonly IAuthorService _authorRepository;
-        private readonly IMapper _mapper;
-        public AuthorController(IAuthorService authorRepository, IMapper mapper)
+        private IValidator<CreateAuthorDto> _createAuthorValidator;
+        private readonly IAuthorService _authorService;
+
+        public AuthorController(IValidator<CreateAuthorDto> createAuhorValidator, IAuthorService authorService)
         {
-            _authorRepository = authorRepository ??
-                throw new ArgumentNullException(nameof(authorRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _createAuthorValidator = createAuhorValidator;
+            _authorService = authorService ??
+                throw new ArgumentNullException(nameof(authorService));
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors()
         {
-            var authorEntities = await _authorRepository.GetAuthorsAsync();
+            var authorDtos = await _authorService.GetAuthorsAsync();
 
-            if (!authorEntities.Any())
-            {
-                return NotFound();
-            }
-
-            var authorsDtoList = _mapper.Map<IEnumerable<AuthorDto>>(authorEntities);
-
-            return Ok(authorsDtoList);
+            return Ok(authorDtos);
         }
 
         [HttpGet("filter")]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> GetFilteredAuthors([FromQuery] AuthorFilter filter)
         {
-            var authorEntities = await _authorRepository.GetFilteredAuthorsAsync(filter);
+            var authorDtos = await _authorService.GetFilteredAuthorsAsync(filter);
 
-            if (!authorEntities.Any())
-            {
-                return NotFound();
-            }
-
-            var authorsDtoList = _mapper.Map<IEnumerable<AuthorDto>>(authorEntities);
-
-            return Ok(authorsDtoList);
+            return Ok(authorDtos);
         }
 
         [HttpPost]
         public async Task<ActionResult<AuthorDto>> CreateAuthor(CreateAuthorDto createAuthorDto)
         {
-            var authorEntitie = _mapper.Map<Author>(createAuthorDto);
+            await _createAuthorValidator.ValidateAndThrowAsync(createAuthorDto);
 
-            if (!(await _authorRepository.AddAuthorAsync(authorEntitie)))
-            {
-                return BadRequest();
-            }
-
-            var authorDto = _mapper.Map<AuthorDto>(authorEntitie);
+            var authorDto = await _authorService.AddAuthorAsync(createAuthorDto);
 
             return Ok(authorDto);
         }

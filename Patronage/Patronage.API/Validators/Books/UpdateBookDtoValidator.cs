@@ -6,9 +6,17 @@ namespace Patronage.API.Validators.Books
 {
     public class UpdateBookDtoValidator : AbstractValidator<UpdateBookDto>
     {
-        public UpdateBookDtoValidator(IAuthorService authorService)
+        public UpdateBookDtoValidator(IAuthorService authorService, IBookService bookService)
         {
             Include(new BookValidator());
+            RuleFor(x => x.Id).CustomAsync(async (dto, validationContext, cancellationToken) =>
+            {
+                var book = await bookService.GetBookAsync(dto);
+                if (book == null)
+                {
+                    validationContext.AddFailure($"Book with id {dto} does not exist.");
+                }
+            });
             RuleFor(x => x.AuthorsIds).Custom((dtos, validationContext) =>
             {
                 dtos.GroupBy(y => y)

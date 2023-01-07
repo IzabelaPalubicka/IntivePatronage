@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Patronage.Application.Exceptions;
 using Patronage.Application.Filters;
 using Patronage.Application.Models.Book;
 using Patronage.Database;
 using Patronage.Database.Entities;
+using System.Data;
 using System.Linq.Expressions;
 
 namespace Patronage.Application.Repositories
@@ -12,61 +16,69 @@ namespace Patronage.Application.Repositories
     {
         private readonly ApplicationDBContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookService> _logger;
+        private readonly IConfigurationProvider _configuration;
 
-        public BookService(ApplicationDBContext context, IMapper mapper)
+        public BookService(ApplicationDBContext context, IMapper mapper, ILogger<BookService> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger;
+            _configuration = _mapper.ConfigurationProvider;
         }
 
-        public async Task<bool> AddBookAsync(Book book)
+        public async Task<BookDto> AddBookAsync(CreateBookDto createBookDto)
         {
+            var bookEntity = _mapper.Map<Book>(createBookDto);
+
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                _context.Books.Add(bookEntity);
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                _logger.LogError(e.Message);
+                throw;
+            }
+
+            return _mapper.Map<BookDto>(bookEntity);
+        }
+
+        public async Task DeleteBookAsync(int id)
+        {
+            var book = await GetBookAsync(id);
+
             if (book is null)
             {
-                throw new ArgumentNullException(nameof(book));
+                throw new NotFoundException($"Book with {id} not found");
             }
+
+            using var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    _context.Books.Add(book);
+                _context.Books.Remove(book);
 
-                    await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-                    await transaction.CommitAsync();
-                }
+                await transaction.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return false;
+                transaction.Rollback();
+                _logger.LogError(e.Message);
+                throw;
             }
-
-            return true;
         }
 
-        public async Task<bool> DeleteBookAsync(Book book)
-        {
-            try
-            {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    _context.Books.Remove(book);
-
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public async Task<IEnumerable<Book>> GetFilteredBookAsync(BookFilter filter)
+        public async Task<IEnumerable<BookDto>> GetFilteredBookAsync(BookFilter filter)
         {
             return await _context.Books
                 .Where(HasTitle(filter))
@@ -74,59 +86,69 @@ namespace Patronage.Application.Repositories
                 .Where(HasRaiting(filter))
                 .Where(HasPublicationDateFrom(filter))
                 .Where(HasPublicationDateTo(filter))
+                .ProjectTo<BookDto>(_configuration)
                 .ToListAsync();
         }
 
-        static Expression<Func<Book, bool>> HasTitle(BookFilter filter) => book => (filter.Title != null && book.Title.ToLower().Contains(filter.Title.ToLower())) || filter.Title == null;
-        static Expression<Func<Book, bool>> HasISBN(BookFilter filter) => book => (filter.ISBN != null && book.ISBN.Contains(filter.ISBN)) || filter.ISBN == null;
-        static Expression<Func<Book, bool>> HasRaiting(BookFilter filter) => book => (filter.Rating != null && book.Rating >= filter.Rating) || filter.Rating == null;
-        static Expression<Func<Book, bool>> HasPublicationDateFrom(BookFilter filter) => book => (filter.PublicationDateStartPeriod != null && book.PublicationDate >= filter.PublicationDateStartPeriod) || filter.PublicationDateStartPeriod == null;
-        static Expression<Func<Book, bool>> HasPublicationDateTo(BookFilter filter) => book => (filter.PublicationDateEndPeriod != null && book.PublicationDate <= filter.PublicationDateEndPeriod) || filter.PublicationDateEndPeriod == null;
-
-        public async Task<IEnumerable<Book>> GetBooksAsync()
+        public async Task<IEnumerable<BookDto>> GetBooksAsync()
         {
-            return await _context.Books.ToListAsync();
+            return await _context.Books
+                .ProjectTo<BookDto>(_configuration)
+                .ToListAsync();
         }
-        public async Task<bool> UpdateBookAsync(int id, UpdateBookDto updateBookDto)
+
+        public async Task UpdateBookAsync(UpdateBookDto updateBookDto)
         {
+            var bookEntity = await GetBookAsync(updateBookDto.Id);
+
+            if (bookEntity is null)
+            {
+                throw new NotFoundException($"Book with {updateBookDto.Id} not found");
+            }
+
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    var bookEntity = await GetBookAsync(id);
+                _mapper.Map(updateBookDto, bookEntity);
 
-                    if (bookEntity == null)
-                    {
-                        return false;
-                    }
+                await _context.SaveChangesAsync();
 
-                    _mapper.Map(updateBookDto, bookEntity);
-
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-                }
+                await transaction.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return false;
+                transaction.Rollback();
+                _logger.LogError(e.Message);
+                throw;
             }
-            return true;
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task<Book?> GetBookAsync(int bookId)
         {
-            return (await _context.SaveChangesAsync() >= 0);
+            return await _context.Books
+                .Include(x => x.BookAuthors)
+                .Where(x => x.Id == bookId)
+                .Select(x => new Book
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    Rating = x.Rating,
+                    ISBN = x.ISBN,
+                    PublicationDate = x.PublicationDate,
+                })
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<Book> GetBookAsync(int bookId)
-        {
-            return await _context.Books.Where(c => c.Id == bookId).Include(x => x.BookAuthors).FirstOrDefaultAsync();
-        }
+        private static Expression<Func<Book, bool>> HasTitle(BookFilter filter) => book => (filter.Title != null && book.Title.ToLower().Contains(filter.Title.ToLower())) || filter.Title == null;
 
-        //public async Task<bool> AuthorExistAsync(int authorId)
-        //{
-        //    return await _context.Authors.AnyAsync(a => a.Id == authorId);
-        //}
+        private static Expression<Func<Book, bool>> HasISBN(BookFilter filter) => book => (filter.ISBN != null && book.ISBN.Contains(filter.ISBN)) || filter.ISBN == null;
+
+        private static Expression<Func<Book, bool>> HasRaiting(BookFilter filter) => book => (filter.Rating != null && book.Rating >= filter.Rating) || filter.Rating == null;
+
+        private static Expression<Func<Book, bool>> HasPublicationDateFrom(BookFilter filter) => book => (filter.PublicationDateStartPeriod != null && book.PublicationDate >= filter.PublicationDateStartPeriod) || filter.PublicationDateStartPeriod == null;
+
+        private static Expression<Func<Book, bool>> HasPublicationDateTo(BookFilter filter) => book => (filter.PublicationDateEndPeriod != null && book.PublicationDate <= filter.PublicationDateEndPeriod) || filter.PublicationDateEndPeriod == null;
     }
 }

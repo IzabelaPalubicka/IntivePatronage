@@ -4,9 +4,9 @@ using Patronage.Application.Repositories;
 
 namespace Patronage.API.Validators.Books
 {
-    public class CreateBookValidator : AbstractValidator<CreateBookDto>
+    public class CreateBookDtoValidator : AbstractValidator<CreateBookDto>
     {
-        public CreateBookValidator(IAuthorService authorService)
+        public CreateBookDtoValidator(IAuthorService authorService)
         {
             Include(new BookValidator());
             RuleFor(x => x.AuthorsIds).Custom((dtos, validationContext) =>

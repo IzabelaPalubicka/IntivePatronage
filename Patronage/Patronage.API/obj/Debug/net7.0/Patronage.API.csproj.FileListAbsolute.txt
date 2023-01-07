@@ -3,7 +3,6 @@ E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\De
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\Debug\net7.0\Patronage.API.AssemblyInfoInputs.cache
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\Debug\net7.0\Patronage.API.AssemblyInfo.cs
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\Debug\net7.0\Patronage.API.csproj.CoreCompileInputs.cache
-E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\Debug\net7.0\Patronage.API.MvcApplicationPartsAssemblyInfo.cs
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\Debug\net7.0\Patronage.API.MvcApplicationPartsAssemblyInfo.cache
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\bin\Debug\net7.0\appsettings.Development.json
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\bin\Debug\net7.0\appsettings.json
@@ -83,3 +82,4 @@ E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\bin\De
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\bin\Debug\net7.0\FluentValidation.dll
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\bin\Debug\net7.0\FluentValidation.AspNetCore.dll
 E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\bin\Debug\net7.0\FluentValidation.DependencyInjectionExtensions.dll
+E:\Documents\Moje programy\intive\IntivePatronage\Patronage\Patronage.API\obj\Debug\net7.0\Patronage.API.MvcApplicationPartsAssemblyInfo.cs

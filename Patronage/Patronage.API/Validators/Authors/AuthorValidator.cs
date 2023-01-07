@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Patronage.Application.Models.Author;
 
-namespace Patronage.API.Validators
+namespace Patronage.API.Validators.Authors
 {
     public class AuthorValidator : AbstractValidator<BaseAuthorDto>
     {

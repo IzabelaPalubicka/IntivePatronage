@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Patronage.Application.Filters;
 using Patronage.Application.Models.Book;
 using Patronage.Application.Repositories;
-using Patronage.Database.Entities;
 
 namespace Patronage.API.Controllers
 {
@@ -14,15 +12,13 @@ namespace Patronage.API.Controllers
     {
         private IValidator<CreateBookDto> _createBookValidator;
         private IValidator<UpdateBookDto> _updateBookValidator;
-        private readonly IBookService _bookRepository;
-        private readonly IMapper _mapper;
+        private readonly IBookService _bookService;
 
-        public BookController(IValidator<CreateBookDto> createBookValidator, IValidator<UpdateBookDto> updateBookValidator, IBookService bookRepository, IMapper mapper)
+        public BookController(IValidator<CreateBookDto> createBookValidator, IValidator<UpdateBookDto> updateBookValidator, IBookService bookService)
         {
             _createBookValidator = createBookValidator;
             _updateBookValidator = updateBookValidator;
-            _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _bookService = bookService ?? throw new ArgumentNullException(nameof(bookService));
         }
 
         [HttpPost]
@@ -30,14 +26,7 @@ namespace Patronage.API.Controllers
         {
             await _createBookValidator.ValidateAndThrowAsync(createBookDto);
 
-            var bookEntity = _mapper.Map<Book>(createBookDto);
-
-            if (!(await _bookRepository.AddBookAsync(bookEntity)))
-            {
-                return BadRequest();
-            }
-
-            var bookDto = _mapper.Map<BookDto>(bookEntity);
+            var bookDto = await _bookService.AddBookAsync(createBookDto);
 
             return Ok(bookDto);
         }
@@ -45,60 +34,35 @@ namespace Patronage.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
         {
-            var bookEntities = await _bookRepository.GetBooksAsync();
-
-            if (!bookEntities.Any())
-            {
-                return NotFound();
-            }
-
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(bookEntities);
+            var booksDto = await _bookService.GetBooksAsync();
 
             return Ok(booksDto);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBook(int id, UpdateBookDto updateBookDto)
+        [HttpPut]
+        public async Task<ActionResult> UpdateBook(UpdateBookDto updateBookDto)
         {
             await _updateBookValidator.ValidateAndThrowAsync(updateBookDto);
 
-            if (!(await _bookRepository.UpdateBookAsync(id, updateBookDto)))
-            {
-                return NotFound();
-            }
+            await _bookService.UpdateBookAsync(updateBookDto);
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBook(int id)
         {
-            var bookEntity = await _bookRepository.GetBookAsync(id);
+            await _bookService.DeleteBookAsync(id);
 
-            if (bookEntity == null)
-            {
-                return NotFound();
-            }
-
-            if (!(await _bookRepository.DeleteBookAsync(bookEntity)))
-            {
-                return BadRequest();
-            }
             return NoContent();
         }
 
         [HttpGet("filter")]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetFilterdBook([FromQuery] BookFilter filter)
         {
-            var bookEntities = await _bookRepository.GetFilteredBookAsync(filter);
+            var bookDtos = await _bookService.GetFilteredBookAsync(filter);
 
-            if (!bookEntities.Any())
-            {
-                return NotFound();
-            }
-
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(bookEntities);
-
-            return Ok(booksDto);
+            return Ok(bookDtos);
         }
     }
 }

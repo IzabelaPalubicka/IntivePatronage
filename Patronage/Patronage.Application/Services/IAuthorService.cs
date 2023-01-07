@@ -1,14 +1,16 @@
 ﻿using Patronage.Application.Filters;
-using Patronage.Database.Entities;
+using Patronage.Application.Models.Author;
 
 namespace Patronage.Application.Repositories
 {
     public interface IAuthorService
     {
-        Task<bool> AddAuthorAsync(Author author);
-        Task<IEnumerable<Author>> GetAuthorsAsync();
-        Task<IEnumerable<Author>> GetFilteredAuthorsAsync(AuthorFilter filter);
-        Task<bool> SaveChangesAsync();
+        Task<AuthorDto> AddAuthorAsync(CreateAuthorDto createAuthorDto);
+
+        Task<IEnumerable<AuthorDto>> GetAuthorsAsync();
+
+        Task<IEnumerable<AuthorDto>> GetFilteredAuthorsAsync(AuthorFilter filter);
+
         Task<HashSet<int>> AuthorsExist(List<int> ids);
     }
 }

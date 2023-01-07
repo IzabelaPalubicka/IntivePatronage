@@ -1,7 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Patronage.API.Validators;
+using Patronage.API.Validators.Authors;
 using Patronage.API.Validators.Books;
+using Patronage.Application.CustomExceptionMiddleware;
 using Patronage.Application.Models.Author;
 using Patronage.Application.Models.Book;
 using Patronage.Application.Repositories;
@@ -25,16 +26,17 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 builder.Services.AddScoped<IValidator<BaseAuthorDto>, AuthorValidator>();
-builder.Services.AddScoped<IValidator<CreateAuthorDto>, AuthorValidator>();
+builder.Services.AddScoped<IValidator<CreateAuthorDto>, CreateAuthorDtoValidator>();
 
 builder.Services.AddScoped<IValidator<BaseBookDto>, BookValidator>();
-builder.Services.AddScoped<IValidator<CreateBookDto>, CreateBookValidator>();
+builder.Services.AddScoped<IValidator<CreateBookDto>, CreateBookDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateBookDto>, UpdateBookDtoValidator>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -49,10 +51,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-
 
 app.Run();

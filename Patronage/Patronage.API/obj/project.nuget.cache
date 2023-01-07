@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ALkjwEvYXxV6DO8qpJhDEI3jfLb9kQHLub2BI/QWPQnGT2A5nqik0cs1BfdVtSeAxa5D184O99sxdMDM2M4RQg==",
+  "dgSpecHash": "pCcwRfplrX/5LT7WlQ1QAT5vU1+5zEplU+hm4o7PvPJ2fRp8BXeQHLS8kG31iR5h2kLDLQV0s7W3vDw0eSEQyA==",
   "success": true,
   "projectFilePath": "E:\\Documents\\Moje programy\\intive\\IntivePatronage\\Patronage\\Patronage.API\\Patronage.API.csproj",
   "expectedPackageFiles": [
@@ -12,6 +12,8 @@
     "C:\\Users\\Iza\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.2.2\\fluentvalidation.aspnetcore.11.2.2.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.2.1\\fluentvalidation.dependencyinjectionextensions.11.2.1.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\Iza\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\Iza\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.1\\microsoft.aspnetcore.openapi.7.0.1.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\Iza\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",

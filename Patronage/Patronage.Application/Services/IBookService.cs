@@ -6,11 +6,16 @@ namespace Patronage.Application.Repositories
 {
     public interface IBookService
     {
-        Task<bool> AddBookAsync(Book book);
-        Task<IEnumerable<Book>> GetBooksAsync();
-        Task<bool> UpdateBookAsync(int id, UpdateBookDto book);
-        Task<bool> DeleteBookAsync(Book book);
-        Task<IEnumerable<Book>> GetFilteredBookAsync(BookFilter filter);
-        Task<Book> GetBookAsync(int bookId);
+        Task<BookDto> AddBookAsync(CreateBookDto book);
+
+        Task<IEnumerable<BookDto>> GetBooksAsync();
+
+        Task UpdateBookAsync(UpdateBookDto book);
+
+        Task DeleteBookAsync(int id);
+
+        Task<IEnumerable<BookDto>> GetFilteredBookAsync(BookFilter filter);
+
+        Task<Book?> GetBookAsync(int id);
     }
 }
