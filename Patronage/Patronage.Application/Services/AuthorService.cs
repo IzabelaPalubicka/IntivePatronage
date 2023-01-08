@@ -16,6 +16,7 @@ namespace Patronage.Application.Repositories
         private readonly ILogger<BookService> _logger;
         private readonly IConfigurationProvider _configuration;
 
+
         public AuthorService(ApplicationDBContext context, IMapper mapper, ILogger<BookService> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -24,6 +25,7 @@ namespace Patronage.Application.Repositories
             _configuration = _mapper.ConfigurationProvider;
         }
 
+        // <inheritdoc />
         public async Task<AuthorDto> AddAuthorAsync(CreateAuthorDto createAuthorDto)
         {
             var authorEntity = _mapper.Map<Author>(createAuthorDto);
@@ -48,11 +50,13 @@ namespace Patronage.Application.Repositories
             return _mapper.Map<AuthorDto>(authorEntity);
         }
 
+        // <inheritdoc />
         public async Task<HashSet<int>> AuthorsExist(List<int> ids)
         {
             return (await _context.Authors.Where(x => ids.Contains(x.Id)).Select(x => x.Id).ToListAsync()).ToHashSet();
         }
 
+        // <inheritdoc />
         public async Task<IEnumerable<AuthorDto>> GetAuthorsAsync()
         {
             return await _context.Authors
@@ -61,6 +65,7 @@ namespace Patronage.Application.Repositories
                 .ToListAsync();
         }
 
+        // <inheritdoc />
         public async Task<IEnumerable<AuthorDto>> GetFilteredAuthorsAsync(AuthorFilter authorFilter)
         {
             return await _context.Authors

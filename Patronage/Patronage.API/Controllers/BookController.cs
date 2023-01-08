@@ -21,6 +21,11 @@ namespace Patronage.API.Controllers
             _bookService = bookService ?? throw new ArgumentNullException(nameof(bookService));
         }
 
+        /// <summary>
+        /// Create a book
+        /// </summary>
+        /// <param name="createBookDto">The book to add</param>
+        /// <returns>The dto of created book</returns>
         [HttpPost]
         public async Task<ActionResult<BookDto>> CreateBook(CreateBookDto createBookDto)
         {
@@ -31,6 +36,10 @@ namespace Patronage.API.Controllers
             return Ok(bookDto);
         }
 
+        /// <summary>
+        /// Get all books
+        /// </summary>
+        /// <returns>The dtos of received books</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
         {
@@ -39,6 +48,11 @@ namespace Patronage.API.Controllers
             return Ok(booksDto);
         }
 
+        /// <summary>
+        /// Update a book
+        /// </summary>
+        /// <param name="updateBookDto">The book data to update</param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<ActionResult> UpdateBook(UpdateBookDto updateBookDto)
         {
@@ -49,6 +63,11 @@ namespace Patronage.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Delete a book by id
+        /// </summary>
+        /// <param name="id">The id of the book to delete</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBook(int id)
         {
@@ -57,10 +76,15 @@ namespace Patronage.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get filtered books by filtered params
+        /// </summary>
+        /// <param name="filter">The filter params</param>
+        /// <returns>The dtos of the filtered books</returns>
         [HttpGet("filter")]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetFilterdBook([FromQuery] BookFilter filter)
         {
-            var bookDtos = await _bookService.GetFilteredBookAsync(filter);
+            var bookDtos = await _bookService.GetFilteredBooksAsync(filter);
 
             return Ok(bookDtos);
         }

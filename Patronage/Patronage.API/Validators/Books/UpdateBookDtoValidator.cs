@@ -17,16 +17,14 @@ namespace Patronage.API.Validators.Books
                     validationContext.AddFailure($"Book with id {dto} does not exist.");
                 }
             });
-            RuleFor(x => x.AuthorsIds).Custom((dtos, validationContext) =>
-            {
-                dtos.GroupBy(y => y)
-                .Where(g => g.Count() > 1)
-                .Select(z => $"Author with id {z} duplicated.")
-                .ToList()
-                .ForEach(x => validationContext.AddFailure(x));
-            });
             RuleFor(x => x.AuthorsIds).CustomAsync(async (dtos, validationContext, cancellationToken) =>
             {
+                dtos.GroupBy(y => y)
+                    .Where(g => g.Count() > 1)
+                    .Select(z => $"Author with id {z} duplicated.")
+                    .ToList()
+                    .ForEach(x => validationContext.AddFailure(x));
+
                 var existingIds = await authorService.AuthorsExist(dtos);
                 foreach (int authorId in dtos)
                 {

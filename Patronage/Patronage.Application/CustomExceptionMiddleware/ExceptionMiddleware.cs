@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Patronage.Application.Exceptions;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace Patronage.Application.CustomExceptionMiddleware
@@ -20,6 +21,17 @@ namespace Patronage.Application.CustomExceptionMiddleware
             {
                 await _next(httpContext);
             }
+            catch (ValidationException ex)
+            {
+                httpContext.Response.ContentType = "application/json";
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                await httpContext.Response.WriteAsync(new ErrorDetails()
+                {
+                    StatusCode = httpContext.Response.StatusCode,
+                    Message = ex.Message
+                }.ToString());
+            }
             catch (NotFoundException ex)
             {
                 httpContext.Response.ContentType = "application/json";
@@ -32,7 +44,7 @@ namespace Patronage.Application.CustomExceptionMiddleware
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
+                _logger.LogError(ex.ToString());
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
@@ -43,7 +55,7 @@ namespace Patronage.Application.CustomExceptionMiddleware
             await context.Response.WriteAsync(new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
-                Message = "Internal Server Error from the custom middleware."
+                Message = "Internal Server Error."
             }.ToString());
         }
     }

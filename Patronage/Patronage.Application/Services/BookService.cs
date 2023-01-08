@@ -27,6 +27,7 @@ namespace Patronage.Application.Repositories
             _configuration = _mapper.ConfigurationProvider;
         }
 
+        // <inheritdoc />
         public async Task<BookDto> AddBookAsync(CreateBookDto createBookDto)
         {
             var bookEntity = _mapper.Map<Book>(createBookDto);
@@ -51,6 +52,7 @@ namespace Patronage.Application.Repositories
             return _mapper.Map<BookDto>(bookEntity);
         }
 
+        // <inheritdoc />
         public async Task DeleteBookAsync(int id)
         {
             var book = await GetBookAsync(id);
@@ -78,7 +80,8 @@ namespace Patronage.Application.Repositories
             }
         }
 
-        public async Task<IEnumerable<BookDto>> GetFilteredBookAsync(BookFilter filter)
+        // <inheritdoc />
+        public async Task<IEnumerable<BookDto>> GetFilteredBooksAsync(BookFilter filter)
         {
             return await _context.Books
                 .Where(HasTitle(filter))
@@ -90,6 +93,7 @@ namespace Patronage.Application.Repositories
                 .ToListAsync();
         }
 
+        // <inheritdoc />
         public async Task<IEnumerable<BookDto>> GetBooksAsync()
         {
             return await _context.Books
@@ -97,6 +101,7 @@ namespace Patronage.Application.Repositories
                 .ToListAsync();
         }
 
+        // <inheritdoc />
         public async Task UpdateBookAsync(UpdateBookDto updateBookDto)
         {
             var bookEntity = await GetBookAsync(updateBookDto.Id);
@@ -124,11 +129,12 @@ namespace Patronage.Application.Repositories
             }
         }
 
-        public async Task<Book?> GetBookAsync(int bookId)
+        // <inheritdoc />
+        public async Task<Book?> GetBookAsync(int id)
         {
             return await _context.Books
                 .Include(x => x.BookAuthors)
-                .Where(x => x.Id == bookId)
+                .Where(x => x.Id == id)
                 .Select(x => new Book
                 {
                     Id = x.Id,

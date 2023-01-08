@@ -745,6 +745,7 @@
       "Patronage.Application/1.0.0": {
         "dependencies": {
           "AutoMapper": "12.0.0",
+          "FluentValidation": "11.2.1",
           "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
           "Patronage.Database": "1.0.0"
         },
