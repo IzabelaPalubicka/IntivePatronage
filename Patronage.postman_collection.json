@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "0d472206-6c25-4e29-bf9d-74c559572318",
+		"name": "Patronage",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16026698"
+	},
+	"item": [
+		{
+			"name": "Create an author",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"firstName\": \"John\",\r\n    \"lastName\": \"Tolkien\",\r\n    \"birthDate\": \"1892-01-07T17:38:04.063Z\",\r\n    \"gender\": true \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7284/api/Author",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Author"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"title\": \"Powrót króla. Władca Pierścieni.\",\r\n    \"description\": \"Tom 3\",\r\n    \"rating\": 9.99,\r\n    \"isbn\": \"2342342233654\",\r\n    \"publicationDate\": \"1947-01-07T17:38:04.063Z\",\r\n    \"authorsIds\": [\r\n        1\r\n    ]\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7284/api/Book/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Book",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read all authors",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7284/api/Author",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Author"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read all books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7284/api/Book/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Book",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Author search by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7284/api/Author/filter?name=tol",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Author",
+						"filter"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "tol"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search book",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7284/api/Book/filter?title=wł&rating=8&publicationDateStartPeriod=1937-01-05T11:22:07.535&publicationDateEndPeriod=1957-01-07T11:22:07.535&isbn",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Book",
+						"filter"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "wł"
+						},
+						{
+							"key": "rating",
+							"value": "8"
+						},
+						{
+							"key": "publicationDateStartPeriod",
+							"value": "1937-01-05T11:22:07.535"
+						},
+						{
+							"key": "publicationDateEndPeriod",
+							"value": "1957-01-07T11:22:07.535"
+						},
+						{
+							"key": "isbn",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update book",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 1,\r\n  \"title\": \"Powrót króla.\",\r\n  \"description\": \"Władca Pierścieni. Tom 3\",\r\n  \"rating\": 10.00,\r\n  \"isbn\": \"1234567891234\",\r\n  \"publicationDate\": \"1946-01-06T18:45:43.009Z\",\r\n  \"authorsIds\": [\r\n    1\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7284/api/Book",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a book",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7284/api/Book/1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7284",
+					"path": [
+						"api",
+						"Book",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
